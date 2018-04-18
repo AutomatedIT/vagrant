@@ -24,17 +24,73 @@ The top level namespaces on Vagrant cloud are like the repository namespaces on 
 
 ### Creating the Vagrantfile
 
-With all that in mind, and after you've identified the box you want to base your VM on, the next step is to
+With all that in mind, and after you've identified the box you want to base your VM on, the next step is to create the Vagrantfile that will define your box. for our simple example - this is *really* simple:
+```
+vagrant init ubuntu/xenial64
+```
+That is it - all you need to do! This is the most trivial Vagrantfile that it's possible to have - if we take a look into it, we can see the ruby headers, the top level configuration and a box definition - at the moment, that's it. So, let's bring it up and see what that minimal definition gives us.
+
+### Starting the Vagrant VM
+
+Even easier:
+```
+vagrant up
+```
+Your new VM is up and running. To jump on:
+```
+> vagrant ssh
+Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-119-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+vagrant@ubuntu-xenial:~$ whoami
+vagrant
+vagrant@ubuntu-xenial:~$
+```
+
 ## In-depth look at the Vagrantfile:
-Vagrantfiles are written in Ruby, so you have the full power of that language at your fingertips if you want. One of the key things about the Vagrantfile, though, is its accessibility - you can get started very quickly
-## Provisioning virtual machines with Vagrant:
-### Provisioning with a shell script:
 
-### Provisioning with Ansible:
+OK, so we've seen the most simple of Vagrantfiles now - so what can we do with one?
 
-## Provider-specific configurations:
+Vagrantfiles are written in Ruby, so you have the full power of that language at your fingertips if you want. Their primary function is to be the description of the type of machine required, and how to configure and provision that machine.
 
-## Multiple hosts created from a single Vagrantfile:
+The Vagrantfile is intended to have a one-to-one relationship with a project and be committed to source-control. As you've seen, other developers can then pick that up and run a simple `vagrant up` to start an identical VM (or several).
+
+### Vagrantfile load order
+
+When `vagrant up` is executed, Vagrant actually loads a sequence of Vagrantfiles and merges the settings they describe as it goes - that means that the order in which they load is important:
+
+1. Vagrantfile packaged with the box that is to be used for a given machine.
+2. Vagrantfile in your Vagrant home directory (defaults to ~/.vagrant.d).<br>
+This lets you specify some defaults for your system user.
+3. Vagrantfile from the project directory.<br>
+This is the Vagrantfile that you will be modifying most of the time.
+4. Multi-machine overrides, if any.
+5. Provider-specific overrides, if any.
+
+Generally, settings later in the sequence will override.
+
+Within the Vagrantfile there can be multiple `Vagrant.configure` blocks - these are merged in the order that they're defined.
+
+### Provisioning virtual machines with Vagrant:
+
+
+#### Provisioning with a shell script:
+
+#### Provisioning with Ansible:
+
+### Provider-specific configurations:
+
+### Multiple hosts created from a single Vagrantfile:
 
 ## Portability across VM providers:
 

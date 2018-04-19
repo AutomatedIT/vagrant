@@ -20,11 +20,11 @@ At this point I'm going to digress very slightly to show you Hashicorp's "Vagran
 
 I'm sure there are plenty of folk here who don't need to be told this, but I feel I need to mention it anyway...: the Vagrant Cloud is an open resource - anyone can put a box that they've created up on it to make it available to the world. That, of course, represents a huge convenience - no matter what VM you want to create, the odds are that someone has already done - but also a *huge* security hole.
 
-The top level namespaces on Vagrant cloud are like the repository namespaces on github - there are no guarantees. When you choose to download a box, you should do so from a known and trusted namespace - for example: 'hashicorp', 'bento', which is the open-source 'bento' project from Chef, or 'ubuntu', which, unsurprisingly, is from Canonical. Otherwise, you should at least check that the namespace is associated with a github project, so you can check out what they do - if you choose to add a random box that appears to do what you want, you should be aware that you do so taking your infosec into your own hands!
+The top level namespaces on Vagrant cloud are like the repository namespaces on github - there are no guarantees. When you download a box, you should do so from a known and trusted namespace - for example: 'hashicorp', 'bento', which is the open-source 'bento' project from Chef, or 'ubuntu', which, unsurprisingly, is from Canonical. Otherwise, you should at least check that the namespace is associated with a github project, so you can check out what they do - if you choose to add a random box that appears to do what you want, you should be aware that you do so taking your infosec into your own hands!
 
 ### Creating the Vagrantfile
 
-With all that in mind, and after you've identified the box you want to base your VM on, the next step is to create the Vagrantfile that will define your box. for our simple example - this is *really* simple:
+With all that in mind, and after you've identified the box you want to base your VM on, the next step is to create the Vagrantfile that will define your box. For our simple example - this is *really* simple:
 ```
 vagrant init ubuntu/xenial64
 ```
@@ -80,6 +80,14 @@ This is the Vagrantfile that you will be modifying most of the time.
 Generally, settings later in the sequence will override.
 
 Within the Vagrantfile there can be multiple `Vagrant.configure` blocks - these are merged in the order that they're defined.
+
+### The Vagrant.configure statement
+
+The first thing to note about the `config` object block is the version. Currently, there are only 2 supported versions:
+- "1" represents the configuration for Vagrant 1.0.x;
+- "2" represents the configuration for Vagrant 1.1 up to 2.0.x - essentially, unless you're using a very old version of Vagrant, this version of `Vagrant.configure` will be "2".
+
+You can mix and match `Vagrant.configure` versions in a single Vagrantfile, but only in separate `Vagrant.configure` blocks.
 
 ### Provisioning virtual machines with Vagrant:
 

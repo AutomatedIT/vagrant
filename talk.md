@@ -89,6 +89,29 @@ The first thing to note about the `config` object block is the version. Currentl
 
 You can mix and match `Vagrant.configure` versions in a single Vagrantfile, but only in separate `Vagrant.configure` blocks.
 
+### Machine settings
+
+The `config.vm` settings define the configuration of the virtual machine that the Vagrantfile manages. There are lots of settings that are useful - I'm going to pick on a few of the more important ones:
+
+- #### The box
+
+  `config.vm.box` <br>
+  Requires version 1.5+
+
+- #### The box URL
+
+  `config.vm.box_url` <br>
+  Requires version 1.5+
+
+- #### The box version
+
+  `config.vm.box_version` <br>
+  Requires version 1.5+
+
+- #### The connection type
+
+  `config.vm.communicator`
+
 ### Provisioning virtual machines with Vagrant:
 
 

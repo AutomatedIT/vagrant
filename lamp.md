@@ -14,4 +14,5 @@
 1. [Getting Started](https://www.vagrantup.com/intro/getting-started/index.html)
 1. [List of Vagrant boxes] (https://app.vagrantup.com/boxes/search?provider=virtualbox)
 1. [LAMP source](https://github.com/iambryancs/vagrant-ansible-lamp)
+1. [Vagrant vs Docker] (https://www.vagrantup.com/intro/vs/docker.html)
 

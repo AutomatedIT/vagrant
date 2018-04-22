@@ -7,6 +7,12 @@ One of the key strengths of Vagrant is that it helps to dispel “it works on my
 
 The Vagrantfile describes the machine or machines that you want to create, including their configuration and any provisioning steps that are required. They’re named ‘Vagrantfiles’ because that is the literal filename. They describe the virtual machines that Vagrant produces completely, so, if they are version-controlled, developers can simply check out the Vagrantfile, run ‘vagrant up’ and have a precisely-defined environment ready in a few moments.
 
+## Vagrant vs Docker
+
+## Talk about private repository
+
+Find out about real-life examples of prod environments commissioned using vagrant
+
 ## Creating an Ubuntu xenial server in 3 easy steps:
 ### Getting a base box
 First, we're going to download the base box that we're going to use:

@@ -21,9 +21,8 @@ This makes containers much more lightweight than VMs - VMs have the overhead of 
 
 Containers are ideally suited to running a single application - in fact, it's a generally accepted good practice to only run a single application in a container. For creating the development environment in which you'll create that application, a VM with multiple tools, whose definition is stored as code and can be shared among developers is ideal - and this is Vagrant's key strength.
 
-Vagrant launches things in order to run apps and services for the purpose of development - this can be on VirtualBox, VMWare, or remote services like AWS. Within those, you could easily run containers - Vagrant really doesn't care, it embraces that - in fact, as I've already mentioned, Docker is one of the possible providers. It's *also* available as a provisioner for Vagrant - so, in addition to being able to launch
+Vagrant launches things in order to run apps and services for the purpose of development - this can be on VirtualBox, VMWare, or remote services like AWS. Within those, you could easily run containers - Vagrant really doesn't care, it embraces that - in fact, it's worth mentioning that you can use Vagrant and Docker together. Docker is one of the possible providers for Vagrant and it's *also* available as a provisioner for Vagrant - so, in addition to being able to launch Docker from either images or Dockerfiles, Vagrant can automatically install Docker and configure containers to run on boot of a VM.
 
-In fact, it's worth mentioning that you can use Vagrant and Docker together - Vagrant works with a variety of virtual environment providers, and Docker is one of them. We'll take a specific look at how this works when we consider the providers that Vagrant works with.
 
 ## Talk about private repository
 

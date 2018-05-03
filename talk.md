@@ -1,16 +1,29 @@
 # Vagrant Talk
 ## Brief refresher on Vagrant:
-Vagrant is in short, a tool for managing virtual machines from any of a large number of providers. In fact, it’s a modular framework for working with virtual machines. It allows you to build and manage VMs in a single workflow. It lets you build environments, provisioned with the tools and dependencies that you need, consistently and quickly. It also lets you treat those environments as disposable, and reproduce them on any host machine that can support virtualisation.
+Vagrant is, in short, a tool for managing virtual machines from any of a large number of providers. In fact, it’s a modular framework for working with virtual machines. It allows you to build and manage VMs in a single workflow. It lets you build environments, provisioned with the tools and dependencies that you need, consistently and quickly. It also lets you treat those environments as disposable, and reproduce them on any host machine that can support virtualisation.
 
 It’s a cross-OS platform, and it also handles a lot of your networking for you - as soon as you standup a Vagrant VM, you’re able to access the network.
+
 One of the key strengths of Vagrant is that it helps to dispel “it works on my machine…” - development and test environments can be consistent and match production environments identically. So, if, for example, your development machine is a windows box, but your production environment is Centos-based, you can create the enviroment you need to direct your development efforts toward easily - and then share it.
 
 The Vagrantfile describes the machine or machines that you want to create, including their configuration and any provisioning steps that are required. They’re named ‘Vagrantfiles’ because that is the literal filename. They describe the virtual machines that Vagrant produces completely, so, if they are version-controlled, developers can simply check out the Vagrantfile, run ‘vagrant up’ and have a precisely-defined environment ready in a few moments.
 
 ## Vagrant vs Docker:
-When I went through the draft of this talk, both Raju and Don asked "Why would you not just use Docker?" - and that's a really good question that I thought it was worth addressing, briefly. In fact, it's worth mentioning that you can use Vagrant and Docker together - Vagrant works with a variety of virtual environment providers, and Docker is one of them. We'll take a specific look at how this works when we consider the providers that Vagrant works with.
+When I went through the draft of this talk, both Raju and Don asked "Why would you not just use Docker?" - and that's a really good question that I thought it was worth addressing, briefly.
 
-So, what are the use-cases for which VMs are more appropriate than using a container. I'm going to assume that you're all aware of the difference
+It isn't really a fair comparison to stand Vagrant next to Docker - in some scenarios they do overlap; in the vast majority, they don't.
+
+So, what are the use-cases for which VMs are more appropriate than using a container. I'm going to assume that you're all aware of the difference between a VM and a container, but I will talk a little to the differences...
+
+A VM is a full-stack computer implemented in software on top of a hypervisor - the hypervisor simulates the underlying hardware and sequesters a portion of the host machine's hardware resources. A container, though, is basically a piece of kernel sleight-of-hand - like a virtual machine, it limits and prioritises access to physical resources but it uses the host kernel to do this, and it also provides namespace isolation for an applications view of process trees, user ids, networking and filesystems.
+
+This makes containers much more lightweight than VMs - VMs have the overhead of running a complete operating system as well as the virtual device drivers needed to simulate hardware. However, they bring much greater isolation.
+
+Containers are ideally suited to running a single application - in fact, it's a generally accepted good practice to only run a single application in a container. For creating the development environment in which you'll create that application, a VM with multiple tools, whose definition is stored as code and can be shared among developers is ideal - and this is Vagrant's key strength.
+
+Vagrant launches things in order to run apps and services for the purpose of development - this can be on VirtualBox, VMWare, or remote services like AWS. Within those, you could easily run containers - Vagrant really doesn't care, it embraces that - in fact, as I've already mentioned, Docker is one of the possible providers. It's *also* available as a provisioner for Vagrant - so, in addition to being able to launch
+
+In fact, it's worth mentioning that you can use Vagrant and Docker together - Vagrant works with a variety of virtual environment providers, and Docker is one of them. We'll take a specific look at how this works when we consider the providers that Vagrant works with.
 
 ## Talk about private repository
 

@@ -78,7 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 ```
 
-You can find this initial Vagrantfile in the LAMP folder on the USB stick.
+( You can find this initial Vagrantfile in the LAMP folder on the USB stick, if you can't be bothered with the typing!)
 
 Next, start the base box with the command `vagrant up`.
 

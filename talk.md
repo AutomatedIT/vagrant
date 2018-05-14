@@ -1,36 +1,36 @@
 # Vagrant Talk
 ## Introduction:
 ### What is Vagrant?
-Vagrant is, in short, an automation tool with a domain-specific language that is used to automate the creation of VMs and VM environments from any of a large number of providers. In fact, it’s a modular framework for working with virtual machines. It allows you to build and manage VMs in a single workflow. It lets you build environments, provisioning them with the tools and dependencies that you need, consistently and quickly. It also lets you treat those environments as disposable, and reproduce them on any host machine that can support virtualisation. Crucially, you can also version-control the specification.
+Vagrant is, in short, an automation tool with a domain-specific language that is used to automate the creation of VMs and VM environments from any of a large number of providers. In fact, it’s a modular framework for working with virtual machines. It allows you to build and manage VMs in a single workflow. It lets you build environments, provisioning them with the tools and dependencies that you need, consistently and quickly. It also lets you treat those environments as disposable, and reproduce them on any host machine that can support virtualisation. Crucially, you can also version-control the specification that you use to create these machines.
 
-It’s a cross-OS platform, and it also handles a lot of your networking for you - as soon as you standup a Vagrant VM, you’re able to access the network.
+It’s a cross-OS platform tool, and it also handles a lot of your networking for you - as soon as you stand up a Vagrant VM, you’re able to access the network.
 
-One of the key strengths of Vagrant is that it helps to dispel “it works on my machine…” - development and test environments can be consistent and match production environments identically. So, if, for example, your development machine is a windows box, but your production environment is Centos-based, you can create the environment you need to direct your development efforts toward easily - and then share it.
+One of the key strengths of Vagrant is that it helps to dispel the classic developer refrain - so beloved of test teams and release managers - “it works on my machine…” - development and test environments can be consistent and match production environments identically. So, if, for example, your development machine is a windows box, but your production environment is Centos-based, you can create the environment you need to direct your development efforts toward easily - and then share it.
 
 The Vagrantfile describes the machine or machines that you want to create, including their configuration and any provisioning steps that are required. They’re named ‘Vagrantfiles’ because that is the literal filename. They describe the virtual machines that Vagrant produces completely, so, if they are version-controlled, developers can simply check out the Vagrantfile, run ‘vagrant up’ and have a precisely-defined environment ready in a few moments.
 
 ### Vagrant vs Docker:
-When I went through the draft of this talk, both Raju and Don asked "Why would you not just use Docker?" - and that's a really good question that I thought it was worth addressing, briefly.
+When I went through the draft of this talk, both Raju and Don asked "Why would you not just use Docker?" - that's a really good question and, even if it is slightly off-topic for this workshop, I thought it was worth addressing, briefly.
 
-It isn't really a fair comparison to stand Vagrant next to Docker - in some scenarios they do overlap; in the vast majority, they don't.
+I'll start by saying that it isn't really a fair comparison to stand Vagrant next to Docker - in some scenarios they do overlap; in the vast majority, they don't. As well as that, they will play well together, as we'll see...
 
-So, what are the use-cases for which VMs are more appropriate than using a container. I'm going to assume that you're all aware of the difference between a VM and a container, but I will talk a little to the differences...
+So, what are the use-cases for which VMs are more appropriate than using a container. I'm going to assume that you're all aware of the basic difference between a VM and a container, but I think it's still worth talking a little to what those differences are:
 
-A VM is a full-stack computer implemented in software on top of a hypervisor - the hypervisor simulates the underlying hardware and sequesters a portion of the host machine's hardware resources. A container, though, is basically a piece of kernel sleight-of-hand - like a virtual machine, it limits and prioritises access to physical resources but it uses the host kernel to do this, and it also provides namespace isolation for an applications view of process trees, user ids, networking and filesystems.
+A VM is a full-stack computer implemented in software on top of a hypervisor - the hypervisor simulates the underlying hardware and sequesters a portion of the host machine's hardware resources. A container, though, is basically a piece of kernel sleight-of-hand - like a virtual machine, it limits and prioritises access to physical resources but it uses the host kernel to do this, and it also provides namespace isolation for an application's view of process trees, user ids, networking and filesystems.
 
-This makes containers much more lightweight than VMs - VMs have the overhead of running a complete operating system as well as the virtual device drivers needed to simulate hardware. However, they bring much greater isolation.
+This makes containers much more lightweight than VMs - after all VMs have the overhead of running a complete operating system as well as the virtual device drivers needed to simulate hardware. However, they bring much greater isolation.
 
 Containers are ideally suited to running a single application - in fact, it's a generally accepted good practice to only run a single application in a container. For creating the development environment in which you'll create that application, a VM with multiple tools, whose definition is stored as code and can be shared among developers is ideal - and this is Vagrant's key strength.
 
-Vagrant launches things in order to run apps and services for the purpose of development - this can be on VirtualBox, VMWare, or remote services like AWS. Within those, you could easily run containers - Vagrant really doesn't care, it embraces that - in fact, it's worth mentioning that you can use Vagrant and Docker together. Docker is one of the possible providers for Vagrant and it's *also* available as a provisioner for Vagrant - so, in addition to being able to launch Docker from either images or Dockerfiles, Vagrant can automatically install Docker and configure containers to run on boot of a VM.
+Vagrant launches things in order to run apps and services for the purpose of development - this can be on VirtualBox, VMWare, or remote services like AWS. Within those, you could easily run containers - Vagrant really doesn't care, it embraces that - in fact, it's worth mentioning again that you can use Vagrant and Docker together. Docker is one of the possible providers for Vagrant and it's *also* available as a provisioner for Vagrant - so, in addition to being able to launch Docker from either images or Dockerfiles, Vagrant can automatically install Docker and configure containers to run on boot of the virtual machine that it creates.
 
 ### Public and private repositories
 
-Vagrant builds on top of a basic unit, the 'box'. This is is the package format for a VM and anything built on top of it. 'Base boxes' contain the bare minimum for Vagrant to function - just the result of a minimal ISO install
+Vagrant builds on top of a basic unit, the 'box'. This is is the package format for a vagrant virtual machine and anything that is built on top of it. You might also come across the term 'base boxes' - these contain the bare minimum for Vagrant to function - just the result of a minimal ISO install. So a box is essentially a base box with any number of other configurations, tools or applications installed on top.
 
-At this point I'm going to digress very slightly to show you Hashicorp's "Vagrant Cloud" - this is a collection of boxes that folk have put together. This is a key part of the Vagrant functionality. As you'll already know, if you've ever built a VM, the process of creating one from scratch is necessarily a slightly convoluted and tedious process. Vagrant shortcuts this by making base images - called boxes - available on the Vagrant Cloud. This stores a collection of boxes of various types and at various levels of provisioning or configuration.
+At this point I'm going to digress very slightly to talk to you about Hashicorp's "Vagrant Cloud" - this is a collection of boxes that folk have put together, hosted online by Hashicorp. This is a key part of the Vagrant functionality. As you'll already know, if you've ever built a VM, the process of creating one from scratch is necessarily a convoluted and tedious process - especially if you have to repeat the process again and again! Hashicorp have shortcut this process by making a variety of boxes available on the Vagrant Cloud. In addition, they've provided hosting for anyone else to store boxes that they've created. This means that the Vagrant Cloud stores a huge collection of boxes of various types and at various levels of provisioning or configuration.
 
-I'm sure there are plenty of folk here who don't need to be told this, but I feel I need to mention it anyway...: the Vagrant Cloud is an open resource - anyone can put a box that they've created up on it to make it available to the world. That, of course, represents a huge convenience - no matter what VM you want to create, the odds are that someone has already done - but also a *huge* security hole.
+I'm sure there are plenty of folk here who don't need to be told this, but I feel I need to mention it anyway...: the Vagrant Cloud is an open resource - anyone can put a box that they've created up there to make it available to the world. That, of course, represents a huge convenience - no matter what VM you want to create, the odds are that someone has already done it - but it is also a *huge* security hole.
 
 The top level namespaces on Vagrant cloud are like the repository namespaces on github - there are no guarantees. When you download a box, you should do so from a known and trusted namespace - for example: 'hashicorp', 'bento', which is the open-source 'bento' project from Chef, or 'ubuntu', which, unsurprisingly, is from Canonical. Otherwise, you should at least check that the namespace is associated with a github project, so you can check out what they do - if you choose to add a random box that appears to do what you want, you should be aware that you do so taking your infosec into your own hands!
 
@@ -46,7 +46,7 @@ Now, strictly speaking, that step isn't even required, as it will be executed au
 
 ### Creating the Vagrantfile
 
-With all that in mind, and after you've identified the box you want to base your VM on, the next step is to create the Vagrantfile that will define your box. For our simple example - this is *really* simple:
+After you've identified the box you want to base your VM on, the next step is to create the Vagrantfile that will define your box. For our simple example - this is *really* simple:
 ```
 vagrant init ubuntu/xenial64
 ```
@@ -81,7 +81,7 @@ vagrant@ubuntu-xenial:~$
 
 ## A look at the Vagrantfile:
 
-OK, so we've seen the most simple of Vagrantfiles now - so what can we do with one?
+OK, so we've seen the most simple of Vagrantfiles now - what can we do with one?
 
 Vagrantfiles are written in Ruby, so you have the full power of that language at your fingertips if you want. Their primary function is to be the description of the type of machine required, and how to configure and provision that machine.
 

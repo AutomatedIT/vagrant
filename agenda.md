@@ -43,22 +43,22 @@
 - #### Summary and links to further info
 - #### Q&A
 
-| Time | Agenda item |
-|---|---|
-| 1830 | Introdcutions |
-| 1835 | What is Vagrant? |
-| 1838 | Vagrant vs Docker |
-| 1842 | Public and private repositories |
-| 1844 | Creating an Ubuntu xenial server in 3 easy steps |
-| 1848 | A look at the Vagrantfile |
-| 1849 | The Vagrant.configure statement |
-| 1850 | Machine settings |
-| 1851 | Provisioning VMs with Vagrant |
-| 1852 | Provisioning with shell scripts |
-| 1854 | Provisioning with Ansible |
-| 1856 | Provisioning with Docker |
-| 1858 | Multiple hosts with a single Vagrantfile |
-| 1900 | Installing Vagrant on Linux, Mac and Windows |
-| 1905 | 1st session Q&A |
-| 1915 | Beer and pizza |
-| 1945 | Workshop start |
+| Time | Agenda item ||
+|---|---||
+| 1830 | Introductions |  |
+| 1835 | What is Vagrant? | 01m39s |
+| 1837 | Vagrant vs Docker | 02m40s |
+| 1840 | Public and private repositories | 02m05s |
+| 1842 | Creating an Ubuntu xenial server in 3 easy steps |  |
+| 1848 | A look at the Vagrantfile |  |
+| 1849 | The Vagrant.configure statement |  |
+| 1850 | Machine settings |  |
+| 1851 | Provisioning VMs with Vagrant |  |
+| 1852 | Provisioning with shell scripts |  |
+| 1854 | Provisioning with Ansible |  |
+| 1856 | Provisioning with Docker |  |
+| 1858 | Multiple hosts with a single Vagrantfile |  |
+| 1900 | Installing Vagrant on Linux, Mac and Windows |  |
+| 1905 | 1st session Q&A |  |
+| 1915 | Beer and pizza |  |
+| 1945 | Workshop start | ? |

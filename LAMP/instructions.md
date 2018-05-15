@@ -10,6 +10,10 @@ You should already have VirtualBox and Vagrant installed on your machine. If you
 
 ### Linux:
 
+You should be able to find the package that suits your OS on the USB stick at /VBox/Linux.
+
+Install using e.g.: `sudo yum install -y <file>.rpm` or `sudo dpkg -i <file>.deb`
+
 Confirm that vagrant is up and running by running `vagrant` - you should see:
 ```
 Usage: vagrant [options] <command> [<args>]
@@ -52,19 +56,33 @@ or not commonly used. To see all subcommands, run the command
 `vagrant list-commands`.
 ```
 
-## 1. The base box
+We're going to do the majority of the work for this workshop on the command line, but you will need to do some editing of files. Since this will be a platform-independent workshop, I will leave it to you to choose the directory that you're going to use - although I'll recommend a folder called `vagrantLAMP/` somewhere under your home area.
 
-We're going to start by creating a really simple Vagrantfile that initialises a Centos 7 box. In order to do this, we've provided a local copy of the 'Centos/7' box. On your USB drive you'll see a folder, in the root, called `centos-VAGRANTSLASH-7`. Copy this to the `.vagrant.d` folder in your home area.
+I'll also leave the choice of text editor to you. I'll be using Atom...
+
+## 1. The vbguest plugin
+We're going to start by installing the vagrant-vbguest plugin. This plugin automatically downloads and installs the correct version of the VirtualBox guest additions into your guest machine. To do this type the following command:
+```
+vagrant plugin install vagrant-vbguest
+```
+You should see:
+```
+Installing the 'vagrant-vbguest' plugin. This can take a few minutes...
+Fetching: vagrant-share-1.1.9.gem (100%)
+Installed the plugin 'vagrant-vbguest (0.15.1)'!
+```
+
+## 2. The base box
+We're going to start by creating a really simple Vagrantfile that initialises a Centos 7 box. In order to keep network traffic down a little, we've provided a local copy of the 'ubuntu/xenial64' box. On your USB drive you'll see a folder `Vagrant/`, and within that a folder called `boxes/`. Copy this to the `.vagrant.d/` folder in your home area.
 
 Confirm that this base box is available by running `vagrant box list` - you should see:
 ```
-centos/7 (virtualbox, 1803.01)
+ubuntu/xenial64 (virtualbox, 1803.01)
 ```
 
 This shows the box name, type (provider) and the Vagrant version assigned to the box.
 
-## 2. The initial Vagrantfile for the base box.
-
+## 3. The initial Vagrantfile for the base box.
 Create a Vagrantfile (literally, a file called 'Vagrantfile' with the following content:
 ```
 # -*- mode: ruby -*-
@@ -74,10 +92,16 @@ Create a Vagrantfile (literally, a file called 'Vagrantfile' with the following 
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "centos/7"
+  config.vm.box = "ubuntu/xenial64"
+  # Set name
+  config.vm.hostname = 'lamp'
+  config.vm.define :lamp  do |lamp|
+  end
+  config.vm.provider :virtualbox do |vb|
+    vb.name = 'lamp'
+  end
 end
 ```
-
 ( You can find this initial Vagrantfile in the LAMP folder on the USB stick, if you can't be bothered with the typing!)
 
 Next, start the base box with the command `vagrant up`.
@@ -85,43 +109,150 @@ Next, start the base box with the command `vagrant up`.
 You should see this:
 ```
 Bringing machine 'default' up with 'virtualbox' provider...
-==> default: Importing base box 'centos/7'...
+==> default: Importing base box 'ubuntu/xenial64'...
 ==> default: Matching MAC address for NAT networking...
-==> default: Checking if box 'centos/7' is up to date...
+==> default: Checking if box 'ubuntu/xenial64' is up to date...
 ==> default: Setting the name of the VM: LAMP_default_1525729225708_92581
 ==> default: Clearing any previously set network interfaces...
 ==> default: Preparing network interfaces based on configuration...
-    default: Adapter 1: nat
-==> default: Forwarding ports...
-    default: 22 (guest) => 2222 (host) (adapter 1)
-==> default: Booting VM...
-==> default: Waiting for machine to boot. This may take a few minutes...
-    default: SSH address: 127.0.0.1:2222
-    default: SSH username: vagrant
-    default: SSH auth method: private key
-    default:
-    default: Vagrant insecure key detected. Vagrant will automatically replace
-    default: this with a newly generated keypair for better security.
-    default:
-    default: Inserting generated public key within guest...
-    default: Removing insecure key from the guest if it's present...
-    default: Key inserted! Disconnecting and reconnecting using new SSH key...
-==> default: Machine booted and ready!
-==> default: Checking for guest additions in VM...
-    default: No guest additions were detected on the base box for this VM! Guest
-    default: additions are required for forwarded ports, shared folders, host only
-    default: networking, and more. If SSH fails on this machine, please install
-    default: the guest additions and repackage the box to continue.
-    default:
-    default: This is not an error message; everything may continue to work properly,
-    default: in which case you may ignore this message.
-==> default: Rsyncing folder: /cygdrive/c/development/AutomatedIT/vagrant/LAMP/ => /vagrant
+[...]
+```
+There will be a lot more text output than that, as the vbguest plugin installs the packages that it needs. You may also see an error during installation of the VirtualBox Guest Additions. To resolve this, start by accessing the vob using ssh:
+```
+vagrant ssh
+[vagrant@lamp ~]$
+```
+Then execute the command `sudo yum install kernel-devel`:
+```
+[vagrant@lamp ~]$ sudo yum install kernel-devel
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirrors.coreix.net
+ * extras: anorien.csc.warwick.ac.uk
+ * updates: mirrors.coreix.net
+Resolving Dependencies
+--> Running transaction check
+---> Package kernel-devel.x86_64 0:3.10.0-862.2.3.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================================
+ Package                     Arch                  Version                            Repository              Size
+===================================================================================================================
+Installing:
+ kernel-devel                x86_64                3.10.0-862.2.3.el7                 updates                 16 M
+
+Transaction Summary
+===================================================================================================================
+Install  1 Package
+
+Total download size: 16 M
+Installed size: 37 M
+Downloading packages:
+updates/7/x86_64/prestodelta                                                                |  57 kB  00:00:00     
+kernel-devel-3.10.0-862.2.3.el7.x86_64.rpm                                                  |  16 MB  00:00:03     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : kernel-devel-3.10.0-862.2.3.el7.x86_64                                                          1/1
+  Verifying  : kernel-devel-3.10.0-862.2.3.el7.x86_64                                                          1/1
+
+Installed:
+  kernel-devel.x86_64 0:3.10.0-862.2.3.el7                                                                         
+
+Complete!
+```
+Once that is complete, type `exit` to leave the ssh session.
+
+## 4. Add synced folder and forwarded ports
+Next, we're going to add a synchronised, shared folder to the Vagrantfile and forward some of the ports that we're going to use later. Add these lines to the Vagrantfile - they should go before the final `end` statement:
+```
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 3306, host: 3306
+  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
+```
+Your complete Vagrantfile should look like this:
+```
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = '2'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  # Set name
+  config.vm.hostname = 'lamp'
+  config.vm.define :lamp  do |lamp|
+  end
+  config.vm.provider :virtualbox do |vb|
+    vb.name = 'lamp'
+  end
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 3306, host: 3306
+  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
+end
+```
+Now we need to reload these changes - we can do this with the command `vagrant reload` - this is, in effect, a `vagrant halt` followed by a `vagrant up`.
+
+## 5. Set up inline provisioning script
+Next, we're going to use some of the Ruby features that were mentioned earlier to set up an inline shell script to perform the provisioning steps that we need to set up the remaining elements of the LAMP stack.
+
+Add this section of code after the Ruby headers, but before the `Vagrant.configure` statement:
+```
+# Inline provisioning script
+$provisionlamp = <<-SCRIPT
+apt-get update -y && apt-get upgrade -y
+apt-get install -y apache2
+debconf-set-selections <<< 'mysql-server mysql-server/root_password password password'
+debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password password'
+apt-get -y install mysql-server
+apt-get -y install php7.0-mysql
+apt-get -y install php7.0 libapache2-mod-php7.0
+SCRIPT
+```
+Then add this line to the `Vagrant.configure` section, just before the final `end`:
+```
+  config.vm.provision "shell", inline: $provisionlamp
 ```
 
-## 3. Add synced folder
+The script contains what are essentially the apt-get commands that you would need to install the packages you need, along with instructions to set the mysql password (to 'password' - so not very secure!)...
 
-## 4. Set up forwarded ports for Apache and MySQL
+The final script should look something like this:
+```
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
-## 5. Define name - hostname and VirtualBox name
+# Inline provisioning script
+$provisionlamp = <<-SCRIPT
+apt-get update -y && apt-get upgrade -y
+apt-get install -y apache2
+debconf-set-selections <<< 'mysql-server mysql-server/root_password password password'
+debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password password'
+apt-get -y install mysql-server
+apt-get -y install php7.0-mysql
+apt-get -y install php7.0 libapache2-mod-php7.0
+SCRIPT
 
-## 6 Set up ansible playbooks
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = '2'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  # Set name
+  config.vm.hostname = 'ubntlamp'
+  config.vm.define :ubntlamp  do |ubntlamp|
+  end
+  config.vm.provider :virtualbox do |vb|
+    vb.name = 'ubntlamp'
+  end
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 3306, host: 3306
+  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
+  config.vm.provision "shell", inline: $provisionlamp
+end
+```
+
+## 6. Test the server!

@@ -42,7 +42,7 @@ First, we're going to download the base box that we're going to use:
 vagrant box add ubuntu/xenial64
 ```
 
-Now, strictly speaking, that step isn't even required, as it will be executed automatically later in the process if you haven't already pulled that box to your local machine.
+Now, strictly speaking, that step isn't even required, as it will be executed automatically later in the process if you haven't already pulled that box to your local machine. What this step is doing is downloading compressed box file from the default location - vagrantcloud.com - and uncompressing it into the .vagrant.d folder in your home area.
 
 ### Creating the Vagrantfile
 
@@ -81,9 +81,9 @@ vagrant@ubuntu-xenial:~$
 
 ## A look at the Vagrantfile:
 
-OK, so we've seen the most simple of Vagrantfiles now - what can we do with one?
+OK, so now we've seen the most simple of Vagrantfiles - what can we do with one?
 
-Vagrantfiles are written in Ruby, so you have the full power of that language at your fingertips if you want. Their primary function is to be the description of the type of machine required, and how to configure and provision that machine.
+Vagrantfiles are written in Ruby, so you have the full power of that language at your fingertips if you want. However, their primary function is to be the description of the type of machine required, and how to configure and provision that machine.
 
 The Vagrantfile is intended to have a one-to-one relationship with a project and be committed to source-control. As you've seen, other developers can then pick that up and run a simple `vagrant up` to start an identical VM (or several).
 

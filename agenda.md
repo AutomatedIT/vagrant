@@ -49,8 +49,9 @@
 | 1835 | What is Vagrant? | 01m39s |
 | 1837 | Vagrant vs Docker | 02m40s |
 | 1840 | Public and private repositories | 02m05s |
-| 1842 | Creating an Ubuntu xenial server in 3 easy steps |  |
-| 1848 | A look at the Vagrantfile |  |
+| 1842 | Creating an Ubuntu xenial server in 3 easy steps | 04m45s |
+| 1847 | A look at the Vagrantfile | 00m30s |
+| 1847 | Vagrantfile load order |  |
 | 1849 | The Vagrant.configure statement |  |
 | 1850 | Machine settings |  |
 | 1851 | Provisioning VMs with Vagrant |  |

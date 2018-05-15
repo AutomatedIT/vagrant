@@ -92,13 +92,13 @@ Create a Vagrantfile (literally, a file called 'Vagrantfile' with the following 
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/xenial64"
-  # Set name
-  config.vm.hostname = 'lamp'
   config.vm.define :lamp  do |lamp|
-  end
-  config.vm.provider :virtualbox do |vb|
-    vb.name = 'lamp'
+    lamp.vm.box = "ubuntu/xenial64"
+    # Set name
+    lamp.vm.hostname = 'lamp'
+    lamp.vm.provider :virtualbox do |vb|
+      vb.name = 'lamp'
+    end
   end
 end
 ```
@@ -117,61 +117,14 @@ Bringing machine 'default' up with 'virtualbox' provider...
 ==> default: Preparing network interfaces based on configuration...
 [...]
 ```
-There will be a lot more text output than that, as the vbguest plugin installs the packages that it needs. You may also see an error during installation of the VirtualBox Guest Additions. To resolve this, start by accessing the vob using ssh:
-```
-vagrant ssh
-[vagrant@lamp ~]$
-```
-Then execute the command `sudo yum install kernel-devel`:
-```
-[vagrant@lamp ~]$ sudo yum install kernel-devel
-Loaded plugins: fastestmirror
-Loading mirror speeds from cached hostfile
- * base: mirrors.coreix.net
- * extras: anorien.csc.warwick.ac.uk
- * updates: mirrors.coreix.net
-Resolving Dependencies
---> Running transaction check
----> Package kernel-devel.x86_64 0:3.10.0-862.2.3.el7 will be installed
---> Finished Dependency Resolution
-
-Dependencies Resolved
-
-===================================================================================================================
- Package                     Arch                  Version                            Repository              Size
-===================================================================================================================
-Installing:
- kernel-devel                x86_64                3.10.0-862.2.3.el7                 updates                 16 M
-
-Transaction Summary
-===================================================================================================================
-Install  1 Package
-
-Total download size: 16 M
-Installed size: 37 M
-Downloading packages:
-updates/7/x86_64/prestodelta                                                                |  57 kB  00:00:00     
-kernel-devel-3.10.0-862.2.3.el7.x86_64.rpm                                                  |  16 MB  00:00:03     
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Installing : kernel-devel-3.10.0-862.2.3.el7.x86_64                                                          1/1
-  Verifying  : kernel-devel-3.10.0-862.2.3.el7.x86_64                                                          1/1
-
-Installed:
-  kernel-devel.x86_64 0:3.10.0-862.2.3.el7                                                                         
-
-Complete!
-```
-Once that is complete, type `exit` to leave the ssh session.
+There is a lot more output as Vagrant installs some of the required packages and the VirtualBox Guest Additions.
 
 ## 4. Add synced folder and forwarded ports
-Next, we're going to add a synchronised, shared folder to the Vagrantfile and forward some of the ports that we're going to use later. Add these lines to the Vagrantfile - they should go before the final `end` statement:
+Next, we're going to add a synchronised, shared folder to the Vagrantfile and forward some of the ports that we're going to use later. Add these lines to the Vagrantfile - they should go just before the final two `end` statements:
 ```
-  config.vm.network :forwarded_port, guest: 80, host: 8080
-  config.vm.network :forwarded_port, guest: 3306, host: 3306
-  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
+  lamp.vm.network :forwarded_port, guest: 80, host: 8080
+  lamp.vm.network :forwarded_port, guest: 3306, host: 3306
+  lamp.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
 ```
 Your complete Vagrantfile should look like this:
 ```
@@ -182,17 +135,17 @@ Your complete Vagrantfile should look like this:
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/xenial64"
-  # Set name
-  config.vm.hostname = 'lamp'
   config.vm.define :lamp  do |lamp|
+    lamp.vm.box = "ubuntu/xenial64"
+    # Set name
+    lamp.vm.hostname = 'lamp'
+    lamp.vm.provider :virtualbox do |vb|
+      vb.name = 'lamp'
+    end
+    lamp.vm.network :forwarded_port, guest: 80, host: 8080
+    lamp.vm.network :forwarded_port, guest: 3306, host: 3306
+    lamp.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
   end
-  config.vm.provider :virtualbox do |vb|
-    vb.name = 'lamp'
-  end
-  config.vm.network :forwarded_port, guest: 80, host: 8080
-  config.vm.network :forwarded_port, guest: 3306, host: 3306
-  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
 end
 ```
 Now we need to reload these changes - we can do this with the command `vagrant reload` - this is, in effect, a `vagrant halt` followed by a `vagrant up`.
@@ -213,9 +166,9 @@ apt-get -y install php7.0-mysql
 apt-get -y install php7.0 libapache2-mod-php7.0
 SCRIPT
 ```
-Then add this line to the `Vagrant.configure` section, just before the final `end`:
+Then add this line to the `Vagrant.configure` section, just before the final two `end` statements:
 ```
-  config.vm.provision "shell", inline: $provisionlamp
+  lamp.vm.provision "shell", inline: $provisionlamp
 ```
 
 The script contains what are essentially the apt-get commands that you would need to install the packages you need, along with instructions to set the mysql password (to 'password' - so not very secure!)...
@@ -240,19 +193,24 @@ SCRIPT
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/xenial64"
-  # Set name
-  config.vm.hostname = 'ubntlamp'
-  config.vm.define :ubntlamp  do |ubntlamp|
+  config.vm.define :lamp  do |lamp|
+    lamp.vm.box = "ubuntu/xenial64"
+    # Set name
+    lamp.vm.hostname = 'lamp'
+    lamp.vm.provider :virtualbox do |vb|
+      vb.name = 'lamp'
+    end
+    lamp.vm.network :forwarded_port, guest: 80, host: 8080
+    lamp.vm.network :forwarded_port, guest: 3306, host: 3306
+    lamp.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
+    lamp.vm.provision "shell", inline: $provisionlamp
   end
-  config.vm.provider :virtualbox do |vb|
-    vb.name = 'ubntlamp'
-  end
-  config.vm.network :forwarded_port, guest: 80, host: 8080
-  config.vm.network :forwarded_port, guest: 3306, host: 3306
-  config.vm.synced_folder '.', '/var/www/vagrant', mount_options: ['dmode=0775', 'fmode=0664']
-  config.vm.provision "shell", inline: $provisionlamp
 end
 ```
+You'll need to reload the configuration again, but, by default, the `vagrant reload` command does not reload the configuration - so, you'll need to force that by running:
+```
+vagrant reload --configuration
+```
+You should see the VM performing the installation of all the packages you requested in the inline script.
 
 ## 6. Test the server!

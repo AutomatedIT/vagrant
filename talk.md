@@ -110,26 +110,41 @@ Within the Vagrantfile there can be multiple `Vagrant.configure` blocks - these 
 
 ### The Vagrant.configure statement
 
-The first thing to note about the `config` object block is the version. Currently, there are only 2 supported versions:
+The first thing to note about the `configure` object block is the version. Currently, there are only 2 supported versions:
 - "1" represents the configuration for Vagrant 1.0.x;
 - "2" represents the configuration for Vagrant 1.1 up to 2.0.x - essentially, unless you're using a very old version of Vagrant, this version of `Vagrant.configure` will be "2".
 
 You can mix and match `Vagrant.configure` versions in a single Vagrantfile, but only in separate `Vagrant.configure` blocks.
 
 ### Machine settings
-The `config.vm` settings define the configuration of the virtual machine that the Vagrantfile manages. There are lots of settings that are useful - I'm going to pick on a few of the more important ones:
-
-- #### The box
+The `config.vm` settings define the configuration of the virtual machine that the Vagrantfile manages. There are lots of settings that are useful - we could be here for hours if I picked through all of them, but they're well documented on the Vagrant pages at https://www.vagrantup.com/docs/vagrantfile/ - I'm going to pick on a few of the more important ones:
 
   `config.vm.box` <br>
   This specifies the vagrant box that is the starting point for this particular VM. Anything we add to this configuration is built on top of the box defined here. by default, Vagrant will look in the `boxes/` folder within the `.vagrant.d` folder in your home aree - however, as I mentioned earlier, if it can't find what it's looking for and you're connected to the internet, vagrant will automatically go to the Vagrant Cloud and try to download the box when you run `vagrant up`.<br>
   `config.vm.box_check_update` <br>
-  This setting determines whether vagrant will check the Vagrant Cloud for an updated version of the box before starting it.
+  This setting determines whether vagrant will check the Vagrant Cloud for an updated version of the box before starting it. You can specify a particular version of a box using the `config.vm.box_version` setting.
 
-- #### The network
+### Network settings
 
-  `config.vm.network` <br>
-  The next few settings in this example Vagrantfile are to do with networking. Now, by default, Vagrant bring up virtual machines that have access to the same network as the host - these settings allow you to refine that. The first two examples show how you can forward a port from the guest to the host
+`config.vm.network` <br>
+The next few settings in this example Vagrantfile are to do with networking. The Vagrant networking options provide you with an abstraction that works across all the possible providers - so, if you pin up a box on VirtualBox, for example, you can reasonably expect that the Vagrantfile will behave in the same way on a VMWare environment.
+
+Now, by default, Vagrant bring up virtual machines that have access to the same network as the host - these settings allow you to refine that.
+
+- #### Forwarded ports
+The first two examples show how you can forward a port from the guest to the host - so, as the comments say, accessing localhost:8080 will access port 80 on the guest. In the second example, we add in the restriction that this can only be done from the local host - this restricts public access.
+
+By default, forwarded ports will only pass TCP traffic, but you can specify the protocol to allow UDP traffic to pass.
+
+- #### Private networks
+The next example shows how to set up a private network. This basically allows your guest to be accessible from the host by an address that is not available to the wider network. Multiple machines within the same private network can communicate with each other.
+
+In this example, a specific IP address is being assigned, but it is possible to use DHCP.
+
+- #### Public networks
+Public networks are essentially less private than private networks, but the definition is made a bit fuzzy by the fact that different providers treat them slightly differently. This is one area where there is inconsistency across providers. While private networks will never allow the general public to access your machine, publics networks might do - so you should be careful.
+
+One other quick note - Vagrant boxes are insecure by default (and by design). They use insecure keypairs for ssh access, public passwords and often allow root access over ssh. With these known credentials, your box is potentially wide open - bear this in mind before using a public network!
 
 ### Provisioning virtual machines with Vagrant:
 Vagrant provisioners are one of the most critical elements of the vagrant process. They allow software installation, configuration changes, and more to be carried out on the machine as part of the `vagrant up` process - all the things that you would normally need to carry out manually when bringing a new machine to life so that it meets your needs.

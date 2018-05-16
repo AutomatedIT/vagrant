@@ -5,15 +5,21 @@
 You should already have VirtualBox and Vagrant installed on your machine. If you don't, please follow these instructions:
 
 ### Windows:
-
+#### VirtualBox
+#### Vagrant
 ### Mac:
-
+#### VirtualBox
+#### Vagrant
 ### Linux:
-
+#### VirtualBox
 You should be able to find the package that suits your OS on the USB stick at /VBox/Linux.
 
 Install using e.g.: `sudo yum install -y <file>.rpm` or `sudo dpkg -i <file>.deb`
+#### Vagrant
+You should be able to find the package that suits your OS on the USB stick at /Vagrant/Linux.
 
+Install using e.g.: `sudo yum install -y <file>.rpm` or `sudo dpkg -i <file>.deb`
+## Confirm Vagrant
 Confirm that vagrant is up and running by running `vagrant` - you should see:
 ```
 Usage: vagrant [options] <command> [<args>]

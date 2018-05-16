@@ -51,8 +51,8 @@
 | 1840 | Public and private repositories | 02m05s |
 | 1842 | Creating an Ubuntu xenial server in 3 easy steps | 04m45s |
 | 1847 | A look at the Vagrantfile | 01m05s |
-| 1848 | Vagrantfile load order | 01m40 |
-| 1850 | The Vagrant.configure statement |  |
+| 1848 | Vagrantfile load order | 01m40s |
+| 1850 | The Vagrant.configure statement | 00m40s |
 | 1850 | Machine settings |  |
 | 1851 | Provisioning VMs with Vagrant |  |
 | 1852 | Provisioning with shell scripts |  |

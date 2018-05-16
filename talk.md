@@ -87,9 +87,14 @@ Vagrantfiles are written in Ruby, so you have the full power of that language at
 
 The Vagrantfile is intended to have a one-to-one relationship with a project and be committed to source-control. As you've seen, other developers can then pick that up and run a simple `vagrant up` to start an identical VM (or several).
 
-### Vagrantfile load order
+Although the Vagrantfile is intended to have a singular relationship with a project, that doesn't mean you're restricted to a single machine. You can define a whole cluster in a single Vagrantfile if you need to, and you can give each of those boxes individual configurations, even base them on completely different base boxes.
 
-When `vagrant up` is executed, Vagrant actually loads a sequence of Vagrantfiles and merges the settings they describe as it goes - that means that the order in which they load is important:
+So, lets take a look at the Vagrantfile that we generated for our ultra-quick demo. First up, you'll notice that this one has a *lot* of comments - Vagrant try to provide you with a lot of information in their basic Vagrantfile - just with most of the features turned off...
+
+### Vagrantfile lookup path and load order
+When you run any `vagrant` command, Vagrant will start looking for a Vagrantfile in the current directory - then it will climb the directory tree until it finds one. This makes it possible to run `vagrant` from any directory in your project.
+
+It's worth mentioning that when `vagrant up` is executed, Vagrant actually loads a sequence of Vagrantfiles and merges the settings they describe as it goes - that means that the order in which they load is important:
 
 1. Vagrantfile packaged with the box that is to be used for a given machine.
 2. Vagrantfile in your Vagrant home directory (defaults to ~/.vagrant.d).<br>
@@ -99,7 +104,7 @@ This is the Vagrantfile that you will be modifying most of the time.
 4. Multi-machine overrides, if any.
 5. Provider-specific overrides, if any.
 
-Generally, settings later in the sequence will override.
+Generally, settings from Vagrantfiles later in that sequence will override settings from earlier - although there are some exceptions - for example, the network settings will simply append to each other.
 
 Within the Vagrantfile there can be multiple `Vagrant.configure` blocks - these are merged in the order that they're defined.
 
@@ -112,30 +117,28 @@ The first thing to note about the `config` object block is the version. Currentl
 You can mix and match `Vagrant.configure` versions in a single Vagrantfile, but only in separate `Vagrant.configure` blocks.
 
 ### Machine settings
-
 The `config.vm` settings define the configuration of the virtual machine that the Vagrantfile manages. There are lots of settings that are useful - I'm going to pick on a few of the more important ones:
 
 - #### The box
 
   `config.vm.box` <br>
-  Requires version 1.5+
+  This specifies the vagrant box that is the starting point for this particular VM. Anything we add to this configuration is built on top of the box defined here. by default, Vagrant will look in the `boxes/` folder within the `.vagrant.d` folder in your home aree - however, as I mentioned earlier, if it can't find what it's looking for and you're connected to the internet, vagrant will automatically go to the Vagrant Cloud and try to download the box when you run `vagrant up`.<br>
+  `config.vm.box_check_update` <br>
+  This setting determines whether vagrant will check the Vagrant Cloud for an updated version of the box before starting it.
 
-- #### The box URL
+- #### The network
 
-  `config.vm.box_url` <br>
-  Requires version 1.5+
-
-- #### The box version
-
-  `config.vm.box_version` <br>
-  Requires version 1.5+
-
-- #### The connection type
-
-  `config.vm.communicator`
+  `config.vm.network` <br>
+  The next few settings in this example Vagrantfile are to do with networking. Now, by default, Vagrant bring up virtual machines that have access to the same network as the host - these settings allow you to refine that. The first two examples show how you can forward a port from the guest to the host
 
 ### Provisioning virtual machines with Vagrant:
+Vagrant provisioners are one of the most critical elements of the vagrant process. They allow software installation, configuration changes, and more to be carried out on the machine as part of the `vagrant up` process - all the things that you would normally need to carry out manually when bringing a new machine to life so that it meets your needs.
 
+Generally, a Vagrant box is not going to be configured perfectly for your particular requirements. You can, of course, log on to the box using `vagrant ssh` and install the software or make the changes that you require by hand, but that defeats one of the key reasons for using Vagrant. The provisioning systems allow you to automate the process so that it is completely repeatable and requires no interaction - so you recreate your environment from scratch with a couple of commands or share it with someone else.
+
+Vagrant provisioning happens the first time you run a `vagrant up` - if the environment had already been created and the `vagrant up` command was just resuming a machine, provisioning will not run. For it to be rerun, you need to add a `--provision` flag or explicitly run `vagrant provision`.
+
+There are a number of ways of using the provisioning mechanisms to do their work
 
 #### Provisioning with a shell script:
 
@@ -148,7 +151,3 @@ The `config.vm` settings define the configuration of the virtual machine that th
 ## Portability across VM providers:
 
 ### Docker as a Vagrant provider
-
-## Creating a typical LAMP stack:
-
-## Creating a RHEL server environment (including automated subscription registration):

@@ -9,7 +9,29 @@ You should already have VirtualBox and Vagrant installed on your machine. If you
 #### Vagrant
 ### Mac:
 #### VirtualBox
+
+double-click on "VirtualBox-5.2.12-122591-OSX.dmg" to install VirtualBox
+
+when the installers verifies and starts up, double-click on the VirtualBox.pkg icon shown in Step 1
+
+hit continue and agree to the terms, you should then get an "Installation Successful" message - click to close and you're done. 
+
+You cannow start the VirtualBox application from inside yoru Applications Folder.
+
+(this took about 2 minutes to install)
+
 #### Vagrant
+
+double-click on the vagrant_2.1.1_x86_64.dmg file to being installation
+
+when the installer starts up, double-click on the vagrant.pkg icon
+
+click continue then install, authorise if required, then click close
+
+open a terminal and type "vagrant" to see usage instructions
+
+(this took slightly less time say 1:30 roughly, both were very quick)
+
 ### Linux:
 #### VirtualBox
 You should be able to find the package that suits your OS on the USB stick at /VBox/Linux.

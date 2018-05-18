@@ -206,6 +206,8 @@ vagrant@ubuntu-xenial:~$
   - effectively `vagrant halt` followed by `vagrant up`
 - `vagrant destroy`
   - stop running machine and delete all resources
+- `vagrant ssh`
+  - ssh to running machine as 'vagrant'
 
 - documentation available at vagrantup.com.
 

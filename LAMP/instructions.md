@@ -233,7 +233,7 @@ end
 ```
 You'll need to reload the configuration again, but, by default, the `vagrant reload` command does not reload the configuration - so, you'll need to force that by running:
 ```
-vagrant reload --configuration
+vagrant reload --provision
 ```
 You should see the VM performing the installation of all the packages you requested in the inline script.
 

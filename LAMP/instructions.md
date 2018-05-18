@@ -17,10 +17,10 @@ When the installers verifies and starts up, double-click on the VirtualBox.pkg i
 
 Hit continue and agree to the terms, you should then get an "Installation Successful" message - click to close and you're done. 
 
-You cannow start the VirtualBox application from inside yoru Applications Folder.
+You can now start the VirtualBox application from inside your Applications Folder.
 
 #### Vagrant
-Double-click on the vagrant_2.1.1_x86_64.dmg file to being installation
+Double-click on the vagrant_2.1.1_x86_64.dmg file to start the installation
 
 When the installer starts up, double-click on the vagrant.pkg icon
 

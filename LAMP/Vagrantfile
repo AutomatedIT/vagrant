@@ -5,5 +5,12 @@
 VAGRANTFILE_API_VERSION = '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "centos/7"
+  config.vm.define :lamp  do |lamp|
+    lamp.vm.box = "ubuntu/xenial64"
+    # Set name
+    lamp.vm.hostname = 'lamp'
+    lamp.vm.provider :virtualbox do |vb|
+      vb.name = 'lamp'
+    end
+  end
 end

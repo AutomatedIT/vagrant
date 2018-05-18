@@ -160,81 +160,169 @@ vagrant
 vagrant@ubuntu-xenial:~$
 ```
 
+## Interacting with Vagrant - the CLI
+- almost all interaction through CLI
+- no GUI
+- three most important :
+  - `vagrant box add`
+  - `vagrant init`
+  - `vagrant up`
+
+### vagrant box
+- manage boxes
+- functionality exposed through subcommands
+- `vagrant box add`
+  - makes box at given address available locally
+  - looks on Vagrant Cloud by default
+- `vagrant box list`
+  - shows local boxes
+- `vagrant box remove`
+  - removes local box
+- `vagrant box repackage`
+  - opposite of `vagrant box add`
+  - takes local box and packages
+- `vagrant box update`
+  - brings to latest version.
+
+### vagrant init
+- simply initialises current directory
+- creates initial Vagrantfile if not extant
+- fail if Vagrantfile exists
+- highlights that only thing Vagrant environment needs is valid Vagrantfile
+
+### Vagrant VM control commands
+-allow you to control state of VM
+- `vagrant up`
+  - starts VM from Vagrantfile
+- `vagrant halt`
+  - stops VM
+  - tries to bring down gracefully
+  - ACPI shutdown
+  - if it can't or `--force` flag will just power  off
+- `vagrant suspend`
+  - halt VM without shutting it down
+- `vagrant reload`
+  - used for changes to Vagrantfile
+  - effectively `vagrant halt` followed by `vagrant up`
+- `vagrant destroy`
+  - stop running machine and delete all resources
+
+- documentation available at vagrantup.com.
+
 ## A look at the Vagrantfile:
-
 - Vagrantfiles written in Ruby
-  - full power of that language if required
-- primary function is description of VM required
-  - configuration
-  - provisioning
+  - full power of that language
+- one-to-one relationship with project
+- committed to source-control
+- developers can pick up and run `vagrant up` to start identical VM
+- can define whole cluster in a single Vagrantfile
+- each box individual configurations
+- even base them on completely different base boxes
 
-- Vagrantfile intended to:
-  - have one-to-one relationship with project
-  - be committed to source-control
-- developers can check out and run simple `vagrant up`
+### Vagrantfile lookup path and load order
+- run any `vagrant` command:
+  - Vagrant starts looking for Vagrantfile in current directory
+  - then climbs directory tree until it finds
+- makes it possible to run `vagrant` from any directory in project
+- when `vagrant up` is executed:
+  - Vagrant loads sequence of Vagrantfiles
+  - merges settings as it goes
+  - order in which they load is important:
+    1. Vagrantfile packaged with the box
+    2. Vagrantfile in Vagrant home directory
+    3. Vagrantfile from project directory
+    4. Multi-machine overrides, if any
+    5. Provider-specific overrides, if any
+- settings from later Vagrantfiles generally override
+- some exceptions:
+  - network settings will append, for example
 
-### Vagrantfile load order
-
-When `vagrant up` is executed, Vagrant actually loads a sequence of Vagrantfiles and merges the settings they describe as it goes - that means that the order in which they load is important:
-
-1. Vagrantfile packaged with the box that is to be used for a given machine.
-2. Vagrantfile in your Vagrant home directory (defaults to ~/.vagrant.d).<br>
-This lets you specify some defaults for your system user.
-3. Vagrantfile from the project directory.<br>
-This is the Vagrantfile that you will be modifying most of the time.
-4. Multi-machine overrides, if any.
-5. Provider-specific overrides, if any.
-
-Generally, settings later in the sequence will override.
-
-Within the Vagrantfile there can be multiple `Vagrant.configure` blocks - these are merged in the order that they're defined.
+- can be multiple `Vagrant.configure` blocks
+  - merged in order defined
 
 ### The Vagrant.configure statement
-
-The first thing to note about the `config` object block is the version. Currently, there are only 2 supported versions:
-- "1" represents the configuration for Vagrant 1.0.x;
-- "2" represents the configuration for Vagrant 1.1 up to 2.0.x - essentially, unless you're using a very old version of Vagrant, this version of `Vagrant.configure` will be "2".
-
-You can mix and match `Vagrant.configure` versions in a single Vagrantfile, but only in separate `Vagrant.configure` blocks.
+- only 2 supported versions for configuration block:
+  - "1" for Vagrant 1.0.x;
+  - "2" for Vagrant 1.1 up to 2.0.x
+- can mix and match in single Vagrantfile only in separate `Vagrant.configure` blocks
 
 ### Machine settings
+- `config.vm` settings define configuration of the virtual machine
+- lots of settings that are useful
+- a few of the more important ones:
+  - `config.vm.box`:
+    - specifies starting vagrant box
+  - `config.vm.hostname`:
+    - sets guest hostname
+  - `config.vm.define`:
+    - multiple machine environments
+    - defines namespace per machine
 
-The `config.vm` settings define the configuration of the virtual machine that the Vagrantfile manages. There are lots of settings that are useful - I'm going to pick on a few of the more important ones:
+### Network settings:
+- `config.vm.network`
+  - forwarded ports
+    - TCP traffic by default
+    - can allow UDP
+    - can specify address for host side
+  - private networks
+    - only talk to host and other machine in same networks
+    - static IP or DHCP
+    - private networks never allow public access to machine
+  - public
+    - less private than private networks
+    - definition is fuzzy because different providers treat them slightly differently
+    - one area where there is inconsistency across providers
+    - publics networks might allow public access to machine so should be careful
 
-- #### The box
+- Vagrant boxes insecure by default and design
+  - use insecure keypairs for ssh access
+  - public passwords
+  - often allow root access over ssh
+- box is potentially wide open
+  - bear in mind before using a public network
 
-  `config.vm.box` <br>
-  Requires version 1.5+
+### Synced folders
+- `config.vm.synced_folder`
+  - allows share of filesystem location between host and guest
+  - simple way of sharing resources between host and guest
+  - support for symbolic links across implementations and host/guest combinations not consistent
+    - test if important to workflow
 
-- #### The box URL
+### Provider-specific settings
+- `config.vm.provider`
+  - allows modification of settings specific to provider
+  - well-behaved providers generally work with any Vagrantfile with sensible defaults
+  - individual providers often expose specific configurations
+  - portable as ignored if provider doesn't match
 
-  `config.vm.box_url` <br>
-  Requires version 1.5+
+### Vagrant provisioning
+- `config.vm.provision`
+  - allow installtion of software
+  - altered configurations
+  - part of the `vagrant up` process
+  - can use `vagrant ssh` to install but not repeatable
+  - using provisioning allows `vagrant destroy` and `vagrant up` to reset machine
+  - sharing much easier
 
-- #### The box version
+- provisioner here can use inline shell script
+- ability to use Ruby functionality to extend Vagrantfile
+  - define inline provisioning shell script as variable
+  - pass variable straight to provisioning
 
-  `config.vm.box_version` <br>
-  Requires version 1.5+
+## Vagrant provisioners
+- inline shell script
+- shell script file
+- Ansible
+- Docker
+- Puppet
+- Chef
 
-- #### The connection type
-
-  `config.vm.communicator`
-
-### Provisioning virtual machines with Vagrant:
-
-
-#### Provisioning with a shell script:
-
-#### Provisioning with Ansible:
-
-### Provider-specific configurations:
-
-### Multiple hosts created from a single Vagrantfile:
-
-## Portability across VM providers:
-
-### Docker as a Vagrant provider
-
-## Creating a typical LAMP stack:
-
-## Creating a RHEL server environment (including automated subscription registration):
+## Vagrant providers
+- VirtualBox (the default)
+- VMWare
+- Kernel Virtual Machine (KVM)
+- OpenStack
+- Docker
+- Amazon Web services
+- Azure
+- Google Cloud
